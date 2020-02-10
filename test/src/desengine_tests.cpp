@@ -1,7 +1,7 @@
 //
 // Created by Konstantin Gredeskoul on 5/16/17.
 //
-#include <geometry.hpp>
+#include <desengine.hpp>
 #include "gtest/gtest.h"
 
 using namespace std;
@@ -9,7 +9,7 @@ using namespace std;
 
 #define VI vector<long long>
 
-class DividerTest : public ::testing::Test {
+class DESEngineTest : public ::testing::Test {
 
 /*
 protected:
