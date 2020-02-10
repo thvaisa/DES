@@ -1,7 +1,7 @@
 //
 // Created by Konstantin Gredeskoul on 5/16/17.
 //
-#include <division.h>
+#include <geometry.h>
 #include "gtest/gtest.h"
 
 using namespace std;
@@ -11,6 +11,7 @@ using namespace std;
 
 class DividerTest : public ::testing::Test {
 
+/*
 protected:
   VI numerators   = {5, 9, 17, 933345453464353416L};
   VI denominators = {2, 3, 19, 978737423423423499L};
@@ -59,5 +60,8 @@ TEST_F(DividerTest, DivisionByZero) {
   catch (...) {
     FAIL() << "Expected DivisionByZeroException!";
   }
-}
+
+
+*/
+};
 
