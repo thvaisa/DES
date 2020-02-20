@@ -7,8 +7,9 @@ set(SOURCE_FILES
 )
 
 add_subdirectory(geometry)
+add_subdirectory(orbit)
 add_library(desengine SHARED STATIC ${SOURCE_FILES})
-target_link_libraries(desengine geometry)
+target_link_libraries(desengine geometry orbit)
 
 
 install(TARGETS desengine DESTINATION ${DES_INSTALL_LIB_DIR})
