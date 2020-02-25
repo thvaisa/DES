@@ -10,11 +10,12 @@ print(scipy.__version__)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
-rad_con = np.pi/180
+rad_con = np.pi/180.0
 Nsteps = 50
-mu = 1.32712440018*10**20
+mu = 1.32712442099e+20
 M_sun = 1.989*10**30
-s_time = 2456879.5
+#s_time = 2456875.954
+s_time =2456879.5
 mu2 = mu/M_sun    
 scale_f = 10**10
 solar_f = 1.0
@@ -44,14 +45,13 @@ def position_at_t(obj, t,mu):
     delta_t = 86400*(t-obj.t0)      #JD change unit
     M = obj.M0 + delta_t*np.sqrt(mu/obj.a**3)
     M = np.mod(M,2*np.pi)
-
-
     #Step 2: solve kepler
     E_j = M
     for i in range(0,40):
         E_j1 = E_j-(E_j-obj.e*np.sin(E_j)-M)/(1-obj.e*np.cos(E_j))  
         E_j = E_j1
-
+        
+    
     E = E_j1
     if(obj.e>1): print("WEEEEA")
     #step 3: obtain true anomaly
@@ -59,7 +59,6 @@ def position_at_t(obj, t,mu):
 
     #step 4 get sitdance to th ecentrla body
     rc = obj.a*(1-obj.e*np.cos(E))
-
     #get position vector
     o = rc*np.array((np.cos(v),np.sin(v),0))
 
@@ -153,9 +152,11 @@ def get_cartesian(obj, time, vec):
     k_theta = k_theta/(np.sqrt(np.dot(k_theta,k_theta)))
     
     #R_transform = np.outer(vec_x,k_x)+np.outer(vec_y,k_theta)+np.outer(vec_z,k_z)
+
+
+
     R_transform = np.outer(k_x,vec_x)+np.outer(k_theta,vec_y)+np.outer(k_z,vec_z)
 
-    print("r",R_transform)
     #print(R_transform)
     #cw=np.cos(obj.omega)
     #sw=np.sin(obj.omega)
@@ -180,7 +181,6 @@ def get_cartesian(obj, time, vec):
     #R3 = R.from_rotvec(-obj.omega * np.array([0, 0, 1])).as_matrix()
 
     vec = np.matmul(R_transform,vec)
-    print(vec)
     #transform to cartesicometan
     #vec_xyz = np.array(( vec[0]*(cw*co-sw*ci*so)-vec[1]*(sw*co+cw*ci*so),\
     #                   vec[0]*(cw*so+sw*ci*co)+vec[1]*(cw*ci*co-sw*so),\
@@ -215,20 +215,17 @@ def get_dust_parameters(v,mu,G,M_sun,r_c):
 comet = Comet()
 particles = []
 comet_pos = []
-for i in range(0,1):
-    time = s_time+10
+for i in range(0,10):
+    #time = s_time+10.0
+    time =  2456875.954+i*1
     o,o_v,vec_xyz,vec_v,E,rc = position_at_t(comet,  time, mu)
-
-
+    #print(vec_xyz*1.0e-10)
+    ax.scatter(vec_xyz[0]/scale_f,vec_xyz[1]/scale_f,vec_xyz[2]/scale_f)
 
     k_r = -o/np.sqrt(np.dot(o,o))
     k_theta = np.cross(k_r,np.array((0,0,1)))    
 
  
-    print(k_r)
-    print(k_theta)
-    print(vec_z)
-
     R_transform = np.outer(k_r,vec_x)+np.outer(k_theta,vec_y)+np.outer(vec_z,vec_z)
 
 
@@ -256,18 +253,14 @@ for i in range(0,1):
 
     vec_test = vec_xyz/scale_f
     vec_polar = vec_new_v/10**4
-    ax.quiver(vec_test[0],vec_test[1],vec_test[2], vec_polar[0]*k_r[0], vec_polar[0]*k_r[1],vec_polar[0]* k_r[2], length=10,color="red")
+    #ax.quiver(vec_test[0],vec_test[1],vec_test[2], vec_polar[0]*k_r[0], vec_polar[0]*k_r[1],vec_polar[0]* k_r[2], length=10,color="red")
 
-    ax.quiver(vec_test[0],vec_test[1],vec_test[2], vec_polar[1]*k_theta[0], vec_polar[1]*k_theta[1], vec_polar[1]*k_theta[2], length=10,color="green")
+    #ax.quiver(vec_test[0],vec_test[1],vec_test[2], vec_polar[1]*k_theta[0], vec_polar[1]*k_theta[1], vec_polar[1]*k_theta[2], length=10,color="green")
 
-    ax.quiver(vec_test[0],vec_test[1],vec_test[2], vec_polar[2]*k_z[0], vec_polar[2]*k_z[1], vec_polar[2]*k_z[2], length=10,color="blue")
-
-
-    print("asd",R_transform)
+    #ax.quiver(vec_test[0],vec_test[1],vec_test[2], vec_polar[2]*k_z[0], vec_polar[2]*k_z[1], vec_polar[2]*k_z[2], length=10,color="blue")
 
 
-
-    vec_dust = vec_new_v+1.0*(1-0.3)**(0.333)*np.random.rand(3)*10**3
+    vec_dust = vec_new_v#+1.0*(1-0.3)**(0.333)*np.random.rand(3)*10**3
 
     i,e_d,q_d,omega = get_dust_parameters(vec_dust,solar_f,mu2,M_sun,rc)    
 
@@ -283,7 +276,13 @@ for i in range(0,1):
     particle.comet = comet
     particle.t = time
     v = 2*np.pi-omega
-    M = v-2*e_d*np.sin(v)+(3/4.0*e_d**2+1/8.0*e_d**4)*np.sin(2*v)-1/3.0*e_d**3*np.sin(3*v)+5/32.0*e_d**4*np.sin(4*v)
+    #M = v-2*e_d*np.sin(v)+(3/4.0*e_d**2+1/8.0*e_d**4)*np.sin(2*v)-1/3.0*e_d**3*np.sin(3*v)+5/32.0*e_d**4*np.sin(4*v)
+    #print("1,",M)
+    #M = v-2*e_d*np.sin(v)+(3/4.0*e_d**2+1/8.0*e_d**4)*np.sin(2*v)-1/3.0*e_d**3*np.sin(3*v)
+    #print("2,",M)
+
+    M = 2*np.arctan(np.sqrt((1-e_d)/(1+e_d))*np.tan(v*0.5))-e_d*np.sin(2*np.arctan(np.sqrt((1-e_d)/(1+e_d))*np.tan(v*0.5)))
+
     particle.M0 = np.mod(M,2*np.pi) 
     particle.t0 = time
  
@@ -384,31 +383,29 @@ for i in range(0,1):
 
 
 locations = []
-for i in range(0,1):
-    time = s_time+10 
+for i in range(0,100):
+    time = 2456875.954+i*0.1
     o,o_v,vec_xyz,vec_v,E,rc = position_at_t(particles[0],  time, mu*solar_f)  
-    print("rc",rc)
-    vec_xyz = get_cartesian(particles[0].comet,particles[0].t, vec_xyz)
-    print(vec_xyz)
+    vec_xyz = get_cartesian(particles[0].comet, particles[0].t, vec_xyz)
     locations.append(vec_xyz/(scale_f))
+    
 
 
 
 
-'''
 i = 0
 for xyz in locations:   
 #    print(xyz[0],xyz[1],xyz[2])  
     
     c = np.array((1,0,0))*((i)/len(locations))
     ax.scatter(xyz[0],xyz[1],xyz[2],color=c)
-    i=i+1
+    #i=i+1
 
 
 
-ax.scatter([-100,100],[-100,100],[-100,100])
+#ax.scatter([-100,100],[-100,100],[-100,100])
 plt.show()
-'''
+
 
 
 

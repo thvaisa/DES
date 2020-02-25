@@ -42,10 +42,19 @@ void ParticleSystem::fill_particle_parameters(ParticleData* particle,
     double i = std::atan2(si,ci);
     double omega = std::atan2(sinw_d,cosw_d);
     double vv = 2*M_PI-omega;
-    double M = vv-2*e_d*std::sin(vv)+
-                (3/4.0*std::pow(e_d,2)+1/8.0*std::pow(e_d,4))*std::sin(2*vv)-
-                1/3.0*std::pow(e_d,3)*std::sin(3*vv)+
-                5/32.0*std::pow(e_d,4)*std::sin(4*vv);
+    //This is bad estimation from the wikipedia that is originally 
+    //from Celestial mechanics books from 50s :D
+    //double M = vv-2*e_d*std::sin(vv)+
+    //            (3/4.0*std::pow(e_d,2)+1/8.0*std::pow(e_d,4))*std::sin(2*vv)-
+    //            1/3.0*std::pow(e_d,3)*std::sin(3*vv)+
+    //            5/32.0*std::pow(e_d,4)*std::sin(4*vv);
+
+
+    //Better approximation
+    //Clément Gazzino. Dynamics of a Geostationary Satellite. [Research Report] Rapport LAAS n° 17432,LAAS-CNRS. 2017. ￿hal-01644934v2￿
+    double M = 2*std::atan(std::sqrt((1-e_d)/(1+e_d))*std::tan(vv*0.5))
+                -e_d*std::sin(2*std::atan(std::sqrt((1-e_d)/(1+e_d))*std::tan(vv*0.5)));
+
     particle->M0 = wrap_value_0_to_2PI(M); 
     particle->t0 = snapshot->t;
     particle->a = aa;
