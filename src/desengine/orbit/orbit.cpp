@@ -39,6 +39,7 @@ void OrbitEngine::add_object(double a,double e,
 void OrbitEngine::get_elliptical_parameters(double* o_xyz, double* o_vel, double* r_c,
                                 KeplerianObject* obj, double t){
     double E = get_E_at_t(obj, t);
+    
     double v = eccentric_to_true_anomaly(E,obj->e);
     //distance to the central body
     *r_c = obj->a*(1.0-obj->e*std::cos(E));
@@ -77,6 +78,7 @@ void OrbitEngine::get_velocity_and_transform(Snapshot* snapshot, int indx,double
     KeplerianObject* obj = get_object(indx);
     double o_xyz[3],o_vel[3],v_xyz[3],xyz[3], r_c;
     get_elliptical_parameters(o_xyz, o_vel,&r_c, obj,t);
+
     convert_to_cartesian_coords(xyz, v_xyz, o_xyz, o_vel,obj);
 
     snapshot->obj = obj;

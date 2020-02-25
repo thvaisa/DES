@@ -135,7 +135,9 @@ static double E_at_t(double t0,double M0,double a,
     double Ej = M;
     double Ej1 = M+10;
     double diff_E = Ej1-Ej;
-    while(std::abs(diff_E)>1.0e-14){
+
+
+    while(std::abs(diff_E)>1.0e-16){
         Ej1=Ej-(Ej-e*std::sin(Ej)-M)/(1.0-e*std::cos(Ej));
         diff_E = Ej1-Ej;
         Ej = Ej1;

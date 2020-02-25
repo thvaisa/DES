@@ -168,7 +168,7 @@ TEST(OrbitTest, get_cartesian_position){
 
 TEST(OrbitTest,get_velocity_and_transform){
     OrbitEngine orbitE = OrbitEngine();
-
+    std::cout << std::setprecision(16);
     double a = 518060000000.0;          //semi-major axis
     double e = 0.64102;                 //eccentricity
     double omega = in_rads(12.780);     //argument of perapsis
@@ -192,13 +192,13 @@ TEST(OrbitTest,get_velocity_and_transform){
     double time = snapshot->t;
     double* R_t = snapshot->R_t;
 
-    EXPECT_NEAR(snapshot->r_c, 466340191062.3299, 100);
+    EXPECT_NEAR(snapshot->r_c, 466340190986.0647, 0.001);
     EXPECT_NEAR(time,t , abs_error); 
 
 
 
-    EXPECT_NEAR(vel[0],11258.55446964 , 0.001);
-    EXPECT_NEAR(vel[1],13646.93317644, 0.001);
+    EXPECT_NEAR(vel[0],11258.55455934 , abs_error);
+    EXPECT_NEAR(vel[1],13646.93328567, abs_error);
     EXPECT_NEAR(vel[2],0.0 , abs_error);
 
 
