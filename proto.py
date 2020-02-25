@@ -14,7 +14,7 @@ rad_con = np.pi/180
 Nsteps = 50
 mu = 1.32712440018*10**20
 M_sun = 1.989*10**30
-s_time = 2457247.65907
+s_time = 2456879.5
 mu2 = mu/M_sun    
 scale_f = 10**10
 solar_f = 1.0
@@ -28,11 +28,11 @@ vec_z =  np.array((0,0,1))
 class Comet:
     a = 518060000000       #semi-major axis
     e = 0.64102       #eccentricity
-    omega = 45*rad_con   #argument of perapsis
-    ohm = 45*rad_con     #longiute of asceinding node
-    i = 47.0405*rad_con       #inclination
-    M0 = 0*rad_con     #mean anomaly
-    t0 = 2457247.65907      #at t0
+    omega = 12.780*rad_con   #argument of perapsis
+    ohm = 50.147*rad_con     #longiute of asceinding node
+    i = 7.0405*rad_con       #inclination
+    M0 = 313.71*rad_con     #mean anomaly
+    t0 = 2456879.5      #at t0
     R = None
     t = None
     comet = None
@@ -74,6 +74,7 @@ def position_at_t(obj, t,mu):
     ci=np.cos(obj.i)
     si=np.sin(obj.i)
 
+
     #transform to cartesian
     vec_xyz = np.array(( o[0]*(cw*co-sw*ci*so)-o[1]*(sw*co+cw*ci*so),\
                        o[0]*(cw*so+sw*ci*co)+o[1]*(cw*ci*co-sw*so),\
@@ -85,6 +86,7 @@ def position_at_t(obj, t,mu):
     vec_v = np.array(( o_v[0]*(cw*co-sw*ci*so)-o_v[1]*(sw*co+cw*ci*so),\
                        o_v[0]*(cw*so+sw*ci*co)+o_v[1]*(cw*ci*co-sw*so),\
                        o_v[0]*(sw*si)+o_v[1]*(cw*si)))
+
 
     return o,o_v,vec_xyz,vec_v,E,rc
 
@@ -118,6 +120,9 @@ def get_periapsis_vector_xyz(obj, mu):
     ci=np.cos(obj.i)
     si=np.sin(obj.i)
 
+
+
+
     #transform to cartesicometan
     vec_c = np.array(( vec[0]*(cw*co-sw*ci*so)-vec[1]*(sw*co+cw*ci*so),\
                        vec[0]*(cw*so+sw*ci*co)+vec[1]*(cw*ci*co-sw*so),\
@@ -130,7 +135,7 @@ def get_periapsis_vector_xyz(obj, mu):
 def get_cartesian(obj, time, vec):
 
     o,o_v,vec_xyz,vec_v,E,rc = position_at_t(comet,  time, mu)
-
+ 
     #ax.scatter(vec_xyz[0]/scale_f,vec_xyz[1]/scale_f,vec_xyz[2]/scale_f,color="red")
 
     vec_periapsis,empty0,empty1,empty2 = get_periapsis_vector_xyz(comet, mu)
@@ -150,8 +155,8 @@ def get_cartesian(obj, time, vec):
     #R_transform = np.outer(vec_x,k_x)+np.outer(vec_y,k_theta)+np.outer(vec_z,k_z)
     R_transform = np.outer(k_x,vec_x)+np.outer(k_theta,vec_y)+np.outer(k_z,vec_z)
 
-
-    print(R_transform)
+    print("r",R_transform)
+    #print(R_transform)
     #cw=np.cos(obj.omega)
     #sw=np.sin(obj.omega)
 
@@ -175,7 +180,7 @@ def get_cartesian(obj, time, vec):
     #R3 = R.from_rotvec(-obj.omega * np.array([0, 0, 1])).as_matrix()
 
     vec = np.matmul(R_transform,vec)
-
+    print(vec)
     #transform to cartesicometan
     #vec_xyz = np.array(( vec[0]*(cw*co-sw*ci*so)-vec[1]*(sw*co+cw*ci*so),\
     #                   vec[0]*(cw*so+sw*ci*co)+vec[1]*(cw*ci*co-sw*so),\
@@ -210,16 +215,26 @@ def get_dust_parameters(v,mu,G,M_sun,r_c):
 comet = Comet()
 particles = []
 comet_pos = []
-for i in range(0,Nsteps):
-    time = s_time+i*timeStep+0.0001
+for i in range(0,1):
+    time = s_time+10
     o,o_v,vec_xyz,vec_v,E,rc = position_at_t(comet,  time, mu)
 
-    
+
 
     k_r = -o/np.sqrt(np.dot(o,o))
     k_theta = np.cross(k_r,np.array((0,0,1)))    
 
+ 
+    print(k_r)
+    print(k_theta)
+    print(vec_z)
+
     R_transform = np.outer(k_r,vec_x)+np.outer(k_theta,vec_y)+np.outer(vec_z,vec_z)
+
+
+
+
+
     vec_new_v = np.matmul(R_transform,o_v)
 
     #ax.scatter(vec_xyz[0]/scale_f,vec_xyz[1]/scale_f,vec_xyz[2]/scale_f)
@@ -246,6 +261,10 @@ for i in range(0,Nsteps):
     ax.quiver(vec_test[0],vec_test[1],vec_test[2], vec_polar[1]*k_theta[0], vec_polar[1]*k_theta[1], vec_polar[1]*k_theta[2], length=10,color="green")
 
     ax.quiver(vec_test[0],vec_test[1],vec_test[2], vec_polar[2]*k_z[0], vec_polar[2]*k_z[1], vec_polar[2]*k_z[2], length=10,color="blue")
+
+
+    print("asd",R_transform)
+
 
 
     vec_dust = vec_new_v+1.0*(1-0.3)**(0.333)*np.random.rand(3)*10**3
@@ -365,14 +384,18 @@ for i in range(0,Nsteps):
 
 
 locations = []
-for i in range(0,100):
-    time = s_time+i*20  
+for i in range(0,1):
+    time = s_time+10 
     o,o_v,vec_xyz,vec_v,E,rc = position_at_t(particles[0],  time, mu*solar_f)  
+    print("rc",rc)
     vec_xyz = get_cartesian(particles[0].comet,particles[0].t, vec_xyz)
-    #print(vec_xyz)
+    print(vec_xyz)
     locations.append(vec_xyz/(scale_f))
 
 
+
+
+'''
 i = 0
 for xyz in locations:   
 #    print(xyz[0],xyz[1],xyz[2])  
@@ -385,7 +408,7 @@ for xyz in locations:
 
 ax.scatter([-100,100],[-100,100],[-100,100])
 plt.show()
-
+'''
 
 
 

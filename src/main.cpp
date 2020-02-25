@@ -28,11 +28,11 @@ int main(int argc, const char *argv[]) {
 
 
 
-    //std::cout << std::setprecision(16);
+    std::cout << std::setprecision(16);
 
     //Generate snapshots of the comet at the certain intervals
-    //engine.generate_snapshots(steps,startTime,endTime);
+    engine.generate_snapshots(steps,startTime,endTime);
     //Create and print particle positions at time endTime
-    //engine.evaluate_particles(startTime, endTime,mu,nPartsPerStep, maxDistFromComet);
+    engine.evaluate_particles(startTime, endTime,mu,nPartsPerStep, maxDistFromComet);
     return 0;
 }

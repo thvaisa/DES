@@ -8,7 +8,7 @@ include_directories(${DESENGINE_HEADERS_DIR})
 include_directories(${ORBIT_HEADERS_DIR})
 include_directories(lib/googletest/googletest/include)
 
-set(SOURCE_FILES main.cpp src/geometry_tests.cpp src/desengine_tests.cpp src/common_tests.cpp)
+set(SOURCE_FILES main.cpp src/geometry_tests.cpp src/desengine_tests.cpp src/common_tests.cpp src/orbit_tests.cpp)
 
 
 add_executable(des_tests ${SOURCE_FILES})

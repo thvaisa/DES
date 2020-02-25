@@ -83,10 +83,10 @@ void ParticleSystem::evaluate_positions(double t,double maxDist2,
         double v = eccentric_to_true_anomaly(E,particle->e);
         double r_c = particle->a*(1.0-particle->e*std::cos(E));
 
-        double o_xyz[3],xyz[3];
+        double o_xyz[3],xyz_r[3],xyz[3];
         solve_elliptical_coords(o_xyz,r_c,v);
-        convert_elliptical_to_cartesian(xyz,o_xyz,particle->R);
-        matvec_multiply(xyz, particle->origin->R_t, xyz);
+        convert_elliptical_to_cartesian(xyz_r,o_xyz,particle->R);
+        matvec_multiply(xyz, particle->origin->R_t, xyz_r);
         
         double dist = 0;
         for(int j=1;j<3;++j) dist+=std::pow(xyz[i]-cPos[i],2);

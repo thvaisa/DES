@@ -82,25 +82,25 @@ TEST(CommonTest, cross_product) {
 
 TEST(CommonTest, test_transform) {
     double R[3*3];
-    double x0[3] = {0.47018505, -0.87519456, -0.11384417};
-    double x1[3] = {1,0,0};
-    double y0[3] = {0.87753738 , 0.47735209 ,-0.04542172};
-    double y1[3] = {0,1,0};
-    double z0[3] = {-0.09409659 , 0.0785459 , -0.99245976};
-    double z1[3] = {0,0,1};
+    double x0[3] = {0.1, 0.2, 0.3};
+    double x1[3] = {1,2,3};
+    double y0[3] = {0.4 , 0.5 ,0.6};
+    double y1[3] = {4,5,6};
+    double z0[3] = {0.7 , 0.8 , 0.9};
+    double z1[3] = {7,8,9};
 
     get_transform(R,x0,x1,y0,y1,z0,z1);
 
     double abs_error = 0.0000001;
-    EXPECT_NEAR(R[0], 0.47018505, abs_error); 
-    EXPECT_NEAR(R[1], 0.87753738, abs_error); 
-    EXPECT_NEAR(R[2], -0.09409659, abs_error); 
-    EXPECT_NEAR(R[3], -0.87519456, abs_error); 
-    EXPECT_NEAR(R[4], 0.47735209, abs_error); 
-    EXPECT_NEAR(R[5], 0.0785459 , abs_error); 
-    EXPECT_NEAR(R[6], -0.11384417, abs_error); 
-    EXPECT_NEAR(R[7], -0.04542172, abs_error); 
-    EXPECT_NEAR(R[8], -0.99245976, abs_error); 
+    EXPECT_NEAR(R[0], 6.6, abs_error); 
+    EXPECT_NEAR(R[1], 7.8, abs_error); 
+    EXPECT_NEAR(R[2], 9, abs_error); 
+    EXPECT_NEAR(R[3], 7.8, abs_error); 
+    EXPECT_NEAR(R[4], 9.3, abs_error); 
+    EXPECT_NEAR(R[5], 10.8 , abs_error); 
+    EXPECT_NEAR(R[6], 9.0, abs_error); 
+    EXPECT_NEAR(R[7], 10.8, abs_error); 
+    EXPECT_NEAR(R[8],  12.6, abs_error); 
 }
 
 TEST(CommonTest, matvec_multiply) {

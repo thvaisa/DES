@@ -5,11 +5,13 @@
 
 
 //solve elliptical velocities from r_c,mu,a,e_E
-void OrbitEngine::solve_elliptical_velocities(double* arr,double r_c,double mu, double a, double e,double E){
+void OrbitEngine::solve_elliptical_velocities(double* arr,double r_c,
+                                                double mu, double a, 
+                                                double e,double E){
     double coeff = std::sqrt(mu*a)/r_c;
     
     arr[0] = -coeff*std::sin(E);
-    arr[1] = coeff*std::cos(std::sqrt(1.0-std::pow(e,2))*E);
+    arr[1] = coeff*std::sqrt(1.0-std::pow(e,2))*std::cos(E);
     arr[2] = 0.0;
 } 
 
@@ -30,6 +32,8 @@ void OrbitEngine::add_object(double a,double e,
                             double M0,double t0){
     objects.push_back(KeplerianObject(a,e,omega,ohm,i,M0,t0));
 }
+
+
 
 //Solve elliptical parameters
 void OrbitEngine::get_elliptical_parameters(double* o_xyz, double* o_vel, double* r_c,
@@ -84,11 +88,14 @@ void OrbitEngine::get_velocity_and_transform(Snapshot* snapshot, int indx,double
     double k_y[3] = {0,1,0};
     double k_z[3] = {0,0,1};
     normalize(k_r,o_xyz,-1);
-    cross_product(k_theta,k_r,k_z);    
+    cross_product(k_theta,k_r,k_z); 
+   
 
     double R_t1[3*3], new_vel[3];
+
     //Particle ellipse to ejector ellipse
     get_transform(R_t1,k_r,k_x,k_theta,k_y,k_z,k_z);
+
 
 
     //Velocity vector(radial,theta,z) (in elliptical coordinates)
@@ -98,12 +105,14 @@ void OrbitEngine::get_velocity_and_transform(Snapshot* snapshot, int indx,double
 
     //ejector ellipse to inertial frame
     double k_ellipse_z[3],k_theta2[3];
+    for(int i=0;i<3;++i) xyz[i] = -xyz[i];
     cross_product(k_ellipse_z,xyz,v_xyz);
     normalize(k_ellipse_z,k_ellipse_z,1);
-    cross_product(k_theta2,k_ellipse_z,v_xyz);
+    cross_product(k_theta2,k_ellipse_z,xyz);
     normalize(k_theta2,k_theta2,1.0);
     k_r[0]=-k_r[0];k_r[1]=-k_r[1];k_r[2]=-k_r[2];
     get_transform(snapshot->R_t,k_r,k_x,k_theta2,k_y,k_ellipse_z,k_z);
+    
 }
 
 
