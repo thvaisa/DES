@@ -110,7 +110,21 @@ void OrbitEngine::get_velocity_and_transform(Snapshot* snapshot, int indx,double
     normalize(k_ellipse_z,k_ellipse_z,1);
     cross_product(k_theta2,k_ellipse_z,xyz);
     normalize(k_theta2,k_theta2,1.0);
-    k_r[0]=-k_r[0];k_r[1]=-k_r[1];k_r[2]=-k_r[2];
+    normalize(k_r,xyz,-1);
+
+
+    /*
+    std::cout << k_r[0] << " " << k_r[1] << " " << k_r[2] << std::endl;
+    std::cout << k_x[0] << " " << k_x[1] << " " << k_x[2] << std::endl;
+
+    std::cout << k_theta2[0] << " " << k_theta2[1] << " " << k_theta2[2] << std::endl;
+    std::cout << k_y[0] << " " << k_y[1] << " " << k_y[2] << std::endl;
+
+    std::cout << k_ellipse_z[0] << " " << k_ellipse_z[1] << " " << k_ellipse_z[2] << std::endl;
+    std::cout << k_z[0] << " " << k_z[1] << " " << k_z[2] << std::endl;
+    */
+
+
     get_transform(snapshot->R_t,k_r,k_x,k_theta2,k_y,k_ellipse_z,k_z);
     
 }
