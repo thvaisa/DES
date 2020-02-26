@@ -14,6 +14,12 @@ struct Vector{
         y = xyz[1];
         z = xyz[2];
     }
+
+    Vector(const Vector& obj){
+        x = obj.x;
+        y = obj.y;
+        z = obj.z;
+    }
 };
 
 struct ParticleData{
@@ -23,6 +29,29 @@ struct ParticleData{
     double M0;
     double a;
     double e;
+
+    public:
+        ParticleData(){};
+        ~ParticleData(){};
+        ParticleData(const ParticleData &obj){
+            origin = obj.origin;
+            std::memcpy(R,obj.R,sizeof(R));
+            t0 = obj.t0;
+            M0 = obj.M0;
+            a = obj.a;
+            e = obj.e;
+        }
+
+        ParticleData& operator=(const ParticleData& obj) {
+            origin = obj.origin;
+            std::memcpy(R,obj.R,sizeof(R));
+            t0 = obj.t0;
+            M0 = obj.M0;
+            a = obj.a;
+            e = obj.e;
+            return *this;
+        }
+
 };
 
 
@@ -35,19 +64,21 @@ class ParticleSystem{
         
         Snapshot* create_and_get_snapshot();
 
-        void set_radiation_factor(double mu);
-        void set_central_body_gravity(double GM);
+
 
         //Elliptical velocity vector and distance to the central body
         void fill_particle_parameters(ParticleData* particle,
                                         Snapshot* snapshot,double* v,
                                         double GM, double mu);
 
-        void generate_dust_velocity(double* arr,double* v);
+        void generate_dust_velocity(double* arr,double* v_c, 
+                                    double* v, double mu, double coeff);
 
 
 
-        void evaluate_snapshot(int indx,int NParts,double GM, double mu);
+        void evaluate_snapshot(int indx,int NParts,
+                                double GM, double mu, 
+                                double coeff);
 
 
         void evaluate_positions(double t,double maxDist2,
@@ -56,7 +87,7 @@ class ParticleSystem{
 
 
 
-        std::vector<ParticleData> particles;
+        
 
         bool empty(){
             return (snapshots.size()==0);
@@ -86,10 +117,9 @@ class ParticleSystem{
 
 
     private:
+        std::vector<ParticleData> particles;
         std::vector<Snapshot> snapshots;
         std::vector<Vector> positions;
-        double mu = 1.0;
-        double GM = SOLAR_MASS_PARAMETER;
 };
 
 

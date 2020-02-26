@@ -4,10 +4,14 @@
 #include <cmath>
 #include <iostream>
 #include <assert.h> 
+#include "rng.hpp"
+#include <cstring>
 
 //scale AU per meter
 const double AU_SCALE = 1.49597870700e+11;  
 const double SOLAR_MASS_PARAMETER = 1.32712442099e+20; 
+
+static RNG rng = RNG();
 
 
 inline double in_rads(double degree){
@@ -25,6 +29,14 @@ struct KeplerianObject{
     double t0;      //t0
 
     KeplerianObject(double a,double e,double omega,double ohm,double i,double M0,double t0){
+        set_parameters(a,e,omega,ohm,i,M0,t0);
+    }
+
+    KeplerianObject(const KeplerianObject &obj) {
+        set_parameters(obj.a,obj.e,obj.omega,obj.ohm,obj.i,obj.M0,obj.t0);
+    }
+
+    void set_parameters(double a,double e,double omega,double ohm,double i,double M0,double t0){
         this->a = a;
         this->e = e;
         this->omega = omega;
@@ -33,6 +45,7 @@ struct KeplerianObject{
         this->M0 = M0;
         this->t0 = t0;
     }
+
 
 };
 
@@ -43,6 +56,20 @@ struct Snapshot{
     double R_t[3*3];
     double vel[3];          //velocity vector (v_r (comet=>sun),v_theta,v_z (elliptica))
     double t;               //time taken
+
+    public:
+
+    Snapshot(){};
+
+    Snapshot(const Snapshot &obj) {
+        this->obj = obj.obj;
+        this->r_c = obj.r_c;
+        std::memcpy(R_t,obj.R_t,sizeof(R_t));
+        std::memcpy(vel,obj.vel,sizeof(vel));
+        this->t = obj.t;
+    }
+
+
 };
 
 
@@ -137,7 +164,7 @@ static double E_at_t(double t0,double M0,double a,
     double diff_E = Ej1-Ej;
 
 
-    while(std::abs(diff_E)>1.0e-16){
+    while(std::abs(diff_E)>1.0e-14){
         Ej1=Ej-(Ej-e*std::sin(Ej)-M)/(1.0-e*std::cos(Ej));
         diff_E = Ej1-Ej;
         Ej = Ej1;

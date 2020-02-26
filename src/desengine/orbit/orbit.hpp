@@ -44,6 +44,7 @@ class OrbitEngine{
 
         void get_cartesian_position(double* xyz, int indx, double t);
 
+        void get_cartesian_position_and_velocity(double* xyz,double* vel, int indx, double t);
 
         void convert_to_cartesian_coords(double* xyz, double* v_xyz, 
                                     double* o_xyz, double* o_vel, KeplerianObject* obj);

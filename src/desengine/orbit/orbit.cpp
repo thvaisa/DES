@@ -59,6 +59,19 @@ void OrbitEngine::get_cartesian_position(double* xyz, int indx, double t){
     convert_elliptical_to_cartesian(xyz,o_xyz,R);
 }
 
+void OrbitEngine::get_cartesian_position_and_velocity(double* xyz,double* vel, int indx, double t){
+    KeplerianObject* obj = get_object(indx);
+    double r_c,o_xyz[3],o_vel[3];
+    get_elliptical_parameters(o_xyz,o_vel,&r_c,obj,t);
+
+    double R[6];
+    rotation_matrix(R,obj->omega,obj->i,obj->ohm);
+    convert_elliptical_to_cartesian(xyz,o_xyz,R);
+    convert_elliptical_to_cartesian(vel,o_vel,R);
+}
+
+
+
 
 void OrbitEngine::convert_to_cartesian_coords(double* xyz, double* v_xyz, 
                                 double* o_xyz, double* o_vel, KeplerianObject* obj){

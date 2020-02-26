@@ -6,7 +6,7 @@ Snapshot* ParticleSystem::create_and_get_snapshot(){
 }
 
 
-
+/*
 void ParticleSystem::set_radiation_factor(double mu){
     this->mu = mu;
 }
@@ -14,7 +14,7 @@ void ParticleSystem::set_radiation_factor(double mu){
 void ParticleSystem::set_central_body_gravity(double GM){
     this->GM = GM;
 }
-
+*/
 
 //Elliptical velocity vector and distance to the central body
 void ParticleSystem::fill_particle_parameters(ParticleData* particle,
@@ -54,7 +54,7 @@ void ParticleSystem::fill_particle_parameters(ParticleData* particle,
     //Clément Gazzino. Dynamics of a Geostationary Satellite. [Research Report] Rapport LAAS n° 17432,LAAS-CNRS. 2017. ￿hal-01644934v2￿
     double M = 2*std::atan(std::sqrt((1-e_d)/(1+e_d))*std::tan(vv*0.5))
                 -e_d*std::sin(2*std::atan(std::sqrt((1-e_d)/(1+e_d))*std::tan(vv*0.5)));
-
+    //std::cout << snapshot->t << " " << wrap_value_0_to_2PI(M) << r_c << " " << mu*GM << std::endl;
     particle->M0 = wrap_value_0_to_2PI(M); 
     particle->t0 = snapshot->t;
     particle->a = aa;
@@ -63,17 +63,24 @@ void ParticleSystem::fill_particle_parameters(ParticleData* particle,
     rotation_matrix(particle->R,omega,i,ohm);
 }
 
-void ParticleSystem::generate_dust_velocity(double* arr,double* v){
-    arr[0]=v[0];
-    arr[1]=v[1];
-    arr[2]=v[2];
+
+
+//Fulle paper
+void ParticleSystem::generate_dust_velocity(double* arr,double* v_c, double* v, double mu, double coeff){
+    arr[0]=v_c[0]+v[0]*std::pow(1.0-mu,coeff);
+    arr[1]=v_c[1]+v[1]*std::pow(1.0-mu,coeff);
+    arr[2]=v_c[2]+v[2]*std::pow(1.0-mu,coeff);
 }
 
-void ParticleSystem::evaluate_snapshot(int indx,int NParts,double GM, double mu){
+void ParticleSystem::evaluate_snapshot(int indx,int NParts,double GM, double mu, double coeff){
     Snapshot* snapshot = &(snapshots[indx]);
     double velocity[3];
+
     for(int i=0;i<NParts;++i){
-        generate_dust_velocity(velocity,snapshot->vel);
+        double scale  = 1;
+        double v[3] = {(-1+2*rng.rand())*scale,(-1+2*rng.rand())*scale,(-1+2*rng.rand())*scale};
+        //std::cout << v[0] << " " << v[1] << " " << v[2] << std::endl;
+        generate_dust_velocity(velocity,snapshot->vel, v, mu,coeff);
         particles.push_back(ParticleData());
         fill_particle_parameters(&(particles.back()),snapshot,
                                 velocity,GM,mu); 
@@ -85,10 +92,14 @@ void ParticleSystem::evaluate_positions(double t,double maxDist2,
                         double mu){
     int omitted_particles = 0;
     for(int i=0;i<particles.size();++i){
+        //std::cout << i << " " << particles.size() << std::endl;
         ParticleData* particle = &(particles[i]);
         if(t<particles[i].t0) return;
         double E = E_at_t(particle->t0,particle->M0,particle->a,
                                 particle->e, t, GM*mu);
+        //std::cout << E << " " << particle->t0 << " " << particle->M0 << " " 
+        //            << particle->a << " " << particle->e << " " << GM*mu << std::endl;
+        
         double v = eccentric_to_true_anomaly(E,particle->e);
         double r_c = particle->a*(1.0-particle->e*std::cos(E));
 
@@ -98,8 +109,9 @@ void ParticleSystem::evaluate_positions(double t,double maxDist2,
         matvec_multiply(xyz, particle->origin->R_t, xyz_r);
         
         double dist = 0;
-        for(int j=1;j<3;++j) dist+=std::pow(xyz[i]-cPos[i],2);
-        //std::cout << xyz[0]-cPos[0]<< " " << xyz[1]-cPos[1] << " " << xyz[2]-cPos[2] << std::endl;
+
+        for(int j=1;j<3;++j) dist+=std::pow(xyz[j]-cPos[j],2);
+       
         if(dist<maxDist2){
             positions.push_back(Vector(xyz));
         }else{
