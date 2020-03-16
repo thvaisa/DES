@@ -18,7 +18,7 @@ M_sun = 1.989*10**30
 s_time =2456879.5
 mu2 = mu/M_sun    
 scale_f = 10**10
-solar_f = 1.0
+solar_f = 0.9
 timeStep = 50
 
 vec_x = np.array((1,0,0))
@@ -215,12 +215,12 @@ def get_dust_parameters(v,mu,G,M_sun,r_c):
 comet = Comet()
 particles = []
 comet_pos = []
-for i in range(0,10):
+for i in range(0,11):
     #time = s_time+10.0
-    time =  2456875.954+i*1
+    time =  2456875.954+i*0.1
     o,o_v,vec_xyz,vec_v,E,rc = position_at_t(comet,  time, mu)
     #print(vec_xyz*1.0e-10)
-    ax.scatter(vec_xyz[0]/scale_f,vec_xyz[1]/scale_f,vec_xyz[2]/scale_f)
+    #ax.scatter(vec_xyz[0]/scale_f,vec_xyz[1]/scale_f,vec_xyz[2]/scale_f)
 
     k_r = -o/np.sqrt(np.dot(o,o))
     k_theta = np.cross(k_r,np.array((0,0,1)))    
@@ -234,8 +234,8 @@ for i in range(0,10):
 
     vec_new_v = np.matmul(R_transform,o_v)
 
-    #ax.scatter(vec_xyz[0]/scale_f,vec_xyz[1]/scale_f,vec_xyz[2]/scale_f)
-    ax.text(vec_xyz[0]/scale_f, vec_xyz[1]/scale_f, vec_xyz[2]/scale_f, str(i), color='red')
+    if(i==10): ax.scatter(vec_xyz[0]/scale_f,vec_xyz[1]/scale_f,vec_xyz[2]/scale_f)
+    if(i==10): ax.text(vec_xyz[0]/scale_f, vec_xyz[1]/scale_f, vec_xyz[2]/scale_f, str(i), color='red')
 
     vec_periapsis,empty0,empty1,empty2 = get_periapsis_vector_xyz(comet, mu)
     k_peri = vec_periapsis/np.sqrt(np.dot(vec_periapsis,vec_periapsis))
@@ -383,10 +383,10 @@ for i in range(0,10):
 
 
 locations = []
-for i in range(0,100):
-    time = 2456875.954+i*0.1
-    o,o_v,vec_xyz,vec_v,E,rc = position_at_t(particles[0],  time, mu*solar_f)  
-    vec_xyz = get_cartesian(particles[0].comet, particles[0].t, vec_xyz)
+for i in range(0,10):
+    time = 2456875.954+1
+    o,o_v,vec_xyz,vec_v,E,rc = position_at_t(particles[i],  time, mu*solar_f)  
+    vec_xyz = get_cartesian(particles[i].comet, particles[i].t, vec_xyz)
     locations.append(vec_xyz/(scale_f))
     
 

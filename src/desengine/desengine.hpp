@@ -6,7 +6,9 @@
 #include "particlesystem.hpp"
 #include "common.hpp"
 #include <iostream>
+#include <fstream>
 
+//Put most of the stuff to .cpp later
 class DESEngine{
     public:
 
@@ -21,19 +23,15 @@ class DESEngine{
         //Destructor
         ~DESEngine(){};
 
-        //Create comet 67P. Parameters from wikipedia  
-        void initialize(){
-            double a = 518060000000.0;          //semi-major axis
-            double e = 0.64102;                 //eccentricity
-            double omega = in_rads(12.780);     //argument of perapsis
-            double ohm = in_rads(50.147);       //longitude of ascending node
-            double i = in_rads(7.0405);         //inclination
-            double M0 = in_rads(313.71);        //mean anomaly
-            double t0 = 2456879.5;              //at t0
 
-            //We add the object to the orbit engine
+        //
+        void initialize(double a, double e, double omega, double ohm, double i, double M0, double t0){
             orbitEngine.add_object(a,e,omega,ohm,i,M0,t0);
-        }
+        };
+
+
+
+
 
         //Generate nSteps snapshots
         void generate_snapshots(int nSteps,
@@ -105,7 +103,7 @@ class DESEngine{
                                     double GM,
                                     double maxDistFromComet
                                     ){
-                                        
+            particleSystem.clear();
             //maxium distance from the comet squared
             double maxDist2 = std::pow(maxDistFromComet,2);
             //Get comet position
@@ -120,11 +118,10 @@ class DESEngine{
         //Print all particle positions at time eTime
         void evaluate_particles(double sTime, double eTime, 
                                 double mu, int nPartsPerStep, double maxDistFromComet,
-                                double coeff
+                                double coeff 
                                 ){
             initialize_particles(eTime,nPartsPerStep,mu,SOLAR_MASS_PARAMETER, coeff);
             evaluate_particles(eTime,mu,SOLAR_MASS_PARAMETER,maxDistFromComet);
-            print_particles(eTime);
         }
 
 
@@ -143,6 +140,26 @@ class DESEngine{
                 std::cout << (*it).x*scale << " " << (*it).y*scale 
                                             << " " << (*it).z*scale << std::endl;
             }
+        }
+
+
+        void write_to_file(double endTime, double scale, std::string fname){
+            std::ofstream myfile;
+            myfile.open (fname+std::string(".dat").c_str());
+            double cPos[3],vel[3];
+            orbitEngine.get_cartesian_position_and_velocity(cPos,vel, 0, endTime);
+            myfile.precision(16);
+            //myfile << vel[0] << " " << vel[1]
+            //                << " " << vel[2] << std::endl;
+            //myfile << cPos[0]*scale << " " << cPos[1]*scale 
+            //                            << " " << cPos[2]*scale << std::endl;
+            for(auto it=particleSystem.getIterator();
+                    it!=particleSystem.endIteration();
+                    ++it){
+                myfile << ((*it).x-cPos[0])*scale << " " << ((*it).y-cPos[1])*scale 
+                                            << " " << ((*it).z-cPos[2])*scale << std::endl;
+            }
+            myfile.close();
         }
 
 

@@ -110,9 +110,9 @@ void ParticleSystem::evaluate_positions(double t,double maxDist2,
         
         double dist = 0;
 
-        for(int j=1;j<3;++j) dist+=std::pow(xyz[j]-cPos[j],2);
-       
-        if(dist<maxDist2){
+        for(int j=0;j<3;++j) dist+=std::pow(xyz[j]-cPos[j],2);
+
+        if(dist<maxDist2 && dist > 1.0){
             positions.push_back(Vector(xyz));
         }else{
             ++omitted_particles;

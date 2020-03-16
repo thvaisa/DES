@@ -86,7 +86,9 @@ class ParticleSystem{
                                 double mu);
 
 
-
+        void clear(){
+            positions.clear();
+        }
         
 
         bool empty(){
