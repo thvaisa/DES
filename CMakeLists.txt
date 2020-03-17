@@ -25,6 +25,6 @@ include_directories(${GEOMETRY_HEADERS_DIR})
 include_directories(${ORBIT_HEADERS_DIR})
 
 add_subdirectory(src)
-add_subdirectory(test)
+#add_subdirectory(test)
 
 
