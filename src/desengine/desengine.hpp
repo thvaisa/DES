@@ -143,9 +143,9 @@ class DESEngine{
         }
 
 
-        void write_to_file(double endTime, double scale, std::string fname){
+        void write_to_file(double endTime, double scale, std::string output_fname){
             std::ofstream myfile;
-            myfile.open (fname+std::string(".dat").c_str());
+            myfile.open (output_fname.c_str());
             double cPos[3],vel[3];
             orbitEngine.get_cartesian_position_and_velocity(cPos,vel, 0, endTime);
             myfile.precision(16);

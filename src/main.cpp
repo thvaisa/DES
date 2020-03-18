@@ -3,7 +3,7 @@
 #include "desengine.hpp"
 #include "rng.hpp"
 #include <fstream>
-
+#include <string>
 
 double read_value(char* arg){
     return std::stod(arg); 
@@ -37,7 +37,7 @@ int main(int argc, const char *argv[]) {
     //Eq. 1 (Fulle) 1/k
     double coeff = 1/6.0;
 
-
+    std::string output_dir;
 
 
     //Create comet 67P. Parameters from wikipedia  
@@ -86,7 +86,7 @@ int main(int argc, const char *argv[]) {
             myfile >> nPartsPerStep;
             myfile >> nSteps;
             myfile >> coeff;
-
+            myfile >> output_dir;
 
             double a;
             while (myfile >> a){
@@ -139,7 +139,7 @@ int main(int argc, const char *argv[]) {
         engine.evaluate_particles(startTime, timeStamps[i], 
                                 mu, nPartsPerStep, 
                                 maxDistFromComet,coeff);
-        std::string fname = std::to_string(i);
+        std::string fname = output_dir+std::to_string(i)+std::string(".out");
         engine.write_to_file(timeStamps[i], 1.0, fname);
 
     }
